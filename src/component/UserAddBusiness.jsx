@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../assets/dashboardsAddBusiness.css';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Cookies from 'js-cookie';
-import UserHeader from './UserHeader';
-import UserSidebar from './UserSidebar';
+import { Alert, Button, Checkbox, Label, Modal, Spinner, TextInput } from 'flowbite-react';
+import { showToast } from '../utils/Toast';
 
 const UserAddBusiness = () => {
-    const [image, setImage] = useState('images/upload.png');
-    const [productImage, setProductImage] = useState('images/upload.png');
+    const [image, setImage] = useState('/images/upload.png');
+    const [productImage, setProductImage] = useState('/images/upload.png');
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [isAuthorized, setIsAuthorized] = useState(false);
     const [states, setStates] = useState([]);
 
     const schema = yup.object().shape({
@@ -34,7 +32,7 @@ const UserAddBusiness = () => {
         isAuthorized: yup.boolean().oneOf([true], 'You must authorize to proceed'),
     });
 
-    const { register, handleSubmit, reset, watch, formState: { errors } } = useForm({
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
 
@@ -63,139 +61,209 @@ const UserAddBusiness = () => {
                     Authorization: `Token ${Cookies.get('token')}`,
                 },
             });
-            setMessage('Business Submitted For Approval')
+            // setMessage('Business Submitted For Approval')
+            showToast('success', 'Business Submitted For Approval')
             setIsSuccess(true);
-            reset()
-            isAuthorized()
-            setImage('images/upload.png');
-            setProductImage('images/upload.png');
+            reset();
+            setImage('/images/upload.png');
+            setProductImage('/images/upload.png');
         } catch (err) {
-            setMessage(err.message);
+            console.log(err, err.message)
+            // setMessage(err.message);
+            showToast('error', err.message)
+
             setIsSuccess(false);
         } finally {
             setLoading(false);
         }
     };
 
-    const closeModal = () => {
-        setMessage('');
-    };
+    const closeModal = () => setMessage('');
 
-    const handleImage = (e) => {
-        setImage(URL.createObjectURL(e.target.files[0]));
-    };
-
-    const handleProduct = (e) => {
-        setProductImage(URL.createObjectURL(e.target.files[0]));
-    };
+    const handleImage = (e) => setImage(URL.createObjectURL(e.target.files[0]));
+    const handleProduct = (e) => setProductImage(URL.createObjectURL(e.target.files[0]));
 
     useEffect(() => {
         fetch('https://nigerian-states-and-lga.vercel.app/')
             .then((response) => response.json())
-            .then((data) => setStates(data));
+            .then((data) => {
+                setStates(data)
+                console.log(data)
+            });
     }, []);
 
-    const handleChange = (e) => {
-        setValue({ ...value, [e.target.name]: e.target.value });
-    };
-
-    const [value, setValue] = useState({
-        select: ''
-    });
-
     return (
-        <div className="Addpost">
-            <UserHeader />
-            <UserSidebar />
-            <div className='form'>
-                <h1>Data Collation Form</h1>
-                <form onSubmit={handleSubmit(submitForm)}>
-                    <label htmlFor='companyname'>Company Name</label>
-                    <input type='text' name='companyname' {...register("companyname")} />
-                    <p>{errors.companyname?.message}</p>
+        <div className="flex items-center justify-center min-h-screen bg-gray-50 p-6">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-4xl">
+                <h1 className="text-3xl font-bold text-center text-gray-700 mb-8">Add Your Business</h1>
 
-                    <label htmlFor='email'>Email</label>
-                    <input type='text' name='email' {...register("email")} />
-                    <p>{errors.email?.message}</p>
+                {message && (
+                    <Alert
+                        color={isSuccess ? 'success' : 'failure'}
+                        onDismiss={closeModal}
+                        withBorderAccent
+                        className="mb-6"
+                    >
+                        {message}
+                    </Alert>
+                )}
 
-
-                    <label htmlFor='state'>State</label>
-                    <select onChange={handleChange} name='select'>
-                        {states.map((state) => (
-                            <option key={state.name} name='state' {...register('state')}>{state.name}</option>
-                        ))}
-                    </select>
-                    <p>{errors.state?.message}</p>
-
-                    <label htmlFor='localgovernment'>Local Government</label>
-                    <input type='text' name='localgovernment' {...register("localgovernment")} />
-                    <p>{errors.localgovernment?.message}</p>
-
-                    <label htmlFor='town'>Town/City</label>
-                    <input type='text' name='town' {...register("town")} />
-                    <p>{errors.town?.message}</p>
-
-                    <label htmlFor='phonenumber'>Phone Number</label>
-                    <input type='text' name='phonenumber' {...register("phonenumber")} />
-                    <p>{errors.phonenumber?.message}</p>
-
-                    <label htmlFor='whatsappnumber'>WhatsApp Number</label>
-                    <input type='text' name='whatsappnumber' {...register("whatsappnumber")} />
-                    <p>{errors.whatsappnumber?.message}</p>
-
-                    <label htmlFor='categoryofbusiness'>Category Of Business</label>
-                    <input type='text' name='categoryofbusiness' {...register("categoryofbusiness")} />
-                    <p>{errors.categoryofbusiness?.message}</p>
-
-                    <label htmlFor='website'>Website</label>
-                    <input type='text' name='website' {...register("website")} />
-                    <p>{errors.website?.message}</p>
-
-                    <label htmlFor='staffstrength'>Staff Strength</label>
-                    <input type='text' name='staffstrength' {...register("staffstrength")} />
-                    <p>{errors.staffstrength?.message}</p>
-
-                    <label htmlFor='ceoImg'>Selfie photo of CEO</label>
-                    <div className='upload'>
-                        <input
-                            type='file'
-                            id='imgs'
-                            style={{ display: 'none' }}
-                            onChange={handleImage}
+                <form onSubmit={handleSubmit(submitForm)} className="space-y-6">
+                    <div>
+                        <Label htmlFor="companyname" value="Company Name" />
+                        <TextInput
+                            type="text"
+                            placeholder="Enter company name"
+                            {...register("companyname")}
+                            color={errors.companyname ? 'failure' : ''}
+                            helperText={errors.companyname?.message}
                         />
-                        <img src={image} alt='CEO' />
-                        <label htmlFor='imgs'>Upload a photo</label>
                     </div>
 
-                    <label htmlFor='logo'>Product/Signboard's photo</label>
-                    <div className='upload'>
-                        <input
-                            type='file'
-                            id='productImg'
-                            style={{ display: 'none' }}
-                            onChange={handleProduct}
+                    <div>
+                        <Label htmlFor="email" value="Email" />
+                        <TextInput
+                            type="email"
+                            placeholder="Enter email address"
+                            {...register("email")}
+                            color={errors.email ? 'failure' : ''}
+                            helperText={errors.email?.message}
                         />
-                        <img src={productImage} alt='Product/Signboard' />
-                        <label htmlFor='productImg'>Upload a photo</label>
                     </div>
 
-                    <label htmlFor='address'>Address</label>
-                    <textarea name='address' {...register("address")}></textarea>
-                    <p>{errors.address?.message}</p>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <Label htmlFor="state" value="State" />
+                            <select className="input-field w-full p-2.5 border border-gray-300 rounded-md" {...register("state")}>
+                                <option value="">Select State</option>
+                                {states.map((state) => (
+                                    <option key={state.name} value={state.name}>{state.name}</option>
+                                ))}
+                            </select>
+                            <p className="text-red-600 text-sm">{errors.state?.message}</p>
+                        </div>
 
-                    <div className="checkbox-container">
-                        <input
-                            type="checkbox"
-                            name="isAuthorized"
+                        <div>
+                            <Label htmlFor="localgovernment" value="Local Government" />
+                            <TextInput
+                                type="text"
+                                placeholder="Local Government"
+                                {...register("localgovernment")}
+                                color={errors.localgovernment ? 'failure' : ''}
+                                helperText={errors.localgovernment?.message}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <Label htmlFor="town" value="Town" />
+                        <TextInput
+                            type="text"
+                            placeholder="Enter your town"
+                            {...register("town")}
+                            color={errors.town ? 'failure' : ''}
+                            helperText={errors.town?.message}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <Label htmlFor="phonenumber" value="Phone Number" />
+                            <TextInput
+                                type="text"
+                                placeholder="11-digit phone number"
+                                {...register("phonenumber")}
+                                color={errors.phonenumber ? 'failure' : ''}
+                                helperText={errors.phonenumber?.message}
+                            />
+                        </div>
+
+                        <div>
+                            <Label htmlFor="whatsappnumber" value="WhatsApp Number" />
+                            <TextInput
+                                type="text"
+                                placeholder="Optional"
+                                {...register("whatsappnumber")}
+                                color={errors.whatsappnumber ? 'failure' : ''}
+                                helperText={errors.whatsappnumber?.message}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <Label htmlFor="categoryofbusiness" value="Business Category" />
+                        <TextInput
+                            type="text"
+                            placeholder="e.g. Retail, Hospitality"
+                            {...register("categoryofbusiness")}
+                            color={errors.categoryofbusiness ? 'failure' : ''}
+                            helperText={errors.categoryofbusiness?.message}
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="website" value="Website (optional)" />
+                        <TextInput
+                            type="text"
+                            placeholder="e.g. https://example.com"
+                            {...register("website")}
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="staffstrength" value="Staff Strength" />
+                        <TextInput
+                            type="text"
+                            placeholder="e.g. 1-10, 10-50"
+                            {...register("staffstrength")}
+                            color={errors.staffstrength ? 'failure' : ''}
+                            helperText={errors.staffstrength?.message}
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="address" value="Business Address" />
+                        <TextInput
+                            type="text"
+                            placeholder="Enter business address"
+                            {...register("address")}
+                            color={errors.address ? 'failure' : ''}
+                            helperText={errors.address?.message}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col items-center">
+                            <Label htmlFor="imgs" className="w-full cursor-pointer text-center font-medium text-main_color p-3 border border-gray-300 rounded-md bg-gray-100 flex flex-col items-center space-y-2">
+                                <img src={image} alt="CEO" className="h-24 w-24 rounded-full object-cover" />
+                                <span className="text-gray-500">Click to upload CEO photo</span>
+                            </Label>
+                            <input type="file" id="imgs" className="hidden" onChange={handleImage} />
+                        </div>
+
+                        <div className="flex flex-col items-center">
+                            <Label htmlFor="productImg" className="w-full cursor-pointer text-center font-medium text-main_color p-3 border border-gray-300 rounded-md bg-gray-100 flex flex-col items-center space-y-2">
+                                <img src={productImage} alt="Product" className="h-24 w-24 rounded-full object-cover" />
+                                <span className="text-gray-500">Click to upload product image</span>
+                            </Label>
+                            <input type="file" id="productImg" className="hidden" onChange={handleProduct} />
+                        </div>
+                    </div>
+
+                    <div className="flex justify-start items-center gap-3">
+                        <Checkbox
+                            id="isAuthorized"
                             {...register("isAuthorized")}
-                            checked={isAuthorized}
-                            onChange={() => setIsAuthorized(!isAuthorized)}
-                        />
-                        <label>I, the CEO of <strong>{watch("companyname")}</strong>, authorize National Greenpages business directory to publish my business on their page and website.</label>
-                    </div>
-                    <p>{errors.isAuthorized?.message}</p>
 
-                    <button type='submit'>Submit</button>
+                            className="text-main_color"
+                        />
+                        <Label htmlFor='isAuthorized' value={`I authorize National Greenpages to publish my business on their page and website.`} />
+                    </div>
+                    <p className="text-red-600 text-sm">{errors.isAuthorized?.message}</p>
+
+                    <Button type="submit" disabled={loading} className="w-full flex items-center justify-content !bg-main_color mt-6">
+                        {loading ? <Spinner size="sm" className="mr-2" /> : 'Submit'}
+                    </Button>
                 </form>
             </div>
         </div>
@@ -203,4 +271,3 @@ const UserAddBusiness = () => {
 };
 
 export default UserAddBusiness;
-

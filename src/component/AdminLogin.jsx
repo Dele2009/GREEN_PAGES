@@ -25,6 +25,7 @@ const AdminLogin = () => {
   const handleLogin = async (data) => {
     try {
       const response = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/admin/`, data);
+      console.log(response)
       if (response.data && response.data.key) {
         Cookies.set('token', response.data.key);
         Cookies.set('is_staff', response.data.is_staff);

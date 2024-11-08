@@ -6,26 +6,24 @@ import '../assets/user-dashboard.css'
 import Cookies from 'js-cookie'
 
 const UserLogout = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  
-    const handleLogout = () => {
-      Cookies.remove('token');
-      Cookies.remove('email');
-      navigate('/signin'); 
-    };
+
+  const handleLogout = () => {
+    Cookies.remove('token');
+    Cookies.remove('email');
+    navigate('/auth/signin');
+  };
   return (
     <div>
-        <UserHeader/>
-        <UserSidebar/>
-        <div className="user-logout-container">
-            <h1>Logout</h1>
-            <p>Are you sure you want to logout?</p>
-            <div className="user-button-container">
-                <button onClick={handleLogout} className="user-logout-button">Logout</button>
-                <button onClick={() => navigate(-1)} className="user-cancel-button">Cancel</button>
-            </div>
+      <div className="user-logout-container">
+        <h1>Logout</h1>
+        <p>Are you sure you want to logout?</p>
+        <div className="user-button-container">
+          <button onClick={handleLogout} className="user-logout-button">Logout</button>
+          <button onClick={() => navigate(-1)} className="user-cancel-button">Cancel</button>
         </div>
+      </div>
     </div>
   )
 }

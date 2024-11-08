@@ -8,15 +8,15 @@ const isAuthenticated = () => {
 };
 
 const isStaff = () => {
-  return Cookies.get('is_staff') === 'true'; 
+  return Cookies.get('is_staff') === 'true';
 };
 
 const PrivateRoute = () => {
   if (!isAuthenticated()) {
-    return <Navigate to="/signin" />;
+    return <Navigate to="/auth/signin" />;
   }
   if (isStaff()) {
-    return <Navigate to="/signin" />;
+    return <Navigate to="/auth/signin" />;
   }
 
   return <PostBusiness />;

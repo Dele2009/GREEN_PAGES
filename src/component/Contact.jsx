@@ -1,15 +1,10 @@
 import React, { useState } from 'react'
 import '../assets/Contact.css'
-import Header from './Header'
-import Footer from './Footer'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
-import styled from 'styled-components';
-import Slider from 'react-slick'
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+
 
 const Contact = () => {
   const [modalMessage, setModalMessage] = useState('');
@@ -43,33 +38,10 @@ const Contact = () => {
     setModalMessage('')
   };
 
-  let settings = {
-    dots: true,
-    infinite: true,
-    speed: 600,
-    slidesToShow: 5,
-    slidesToScroll: 1,
-    autoplay: true,
-
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 4
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 3
-        }
-      }
-    ]
-  }
+ 
 
   return (
     <div>
-      <Header />
       <div className='con-body'>
         <div className='contact'>
 
@@ -142,18 +114,6 @@ const Contact = () => {
 
           </div>
         </div>
-        <Carousel {...settings}>
-          <img src='/images/header-logo.jpg' />
-          <img src='/images/logo.png' />
-          <img src='/images/header-logo.jpg' />
-          <img src='/images/logo.png' />
-          <img src='/images/header-logo.jpg' />
-          <img src='/images/logo.png' />
-          <img src='/images/header-logo.jpg' />
-          <img src='/images/logo.png' />
-          <img src='/images/header-logo.jpg' />
-          <img src='/images/logo.png' />
-        </Carousel>
       </div>
       {modalMessage && (
         <div className="modal-overlay">
@@ -163,66 +123,9 @@ const Contact = () => {
           </div>
         </div>
       )}
-      <Footer />
     </div>
   )
 }
 
 export default Contact
 
-const Carousel = styled(Slider)`
-    padding-top: 120px;
-    padding-bottom: 20px;
-    color: #fff;
-    cursor: pointer;
-    width: 100%;
-
-    img{
-        width: 70% !important;
-        height: 40px;
-        padding: 0 50px;
-
-        @media(max-width:600px){
-            width: 20%;
-            padding: 0 20px;
-      }
-    }
-
-    ul li button{
-        &:before{
-            display: none;
-        }
-        display: none;
-    }
-
-    li.slick-active button:before{
-        color: white;
-        display: none;
-    }
-
-    .slick-list{
-        overflow: hidden;
-    }
-
-    .slick-prev{
-      display: none;
-    }
-    .slick-next{
-      display: none;
-      right: 0;
-    }
-    .slick-prev::before{
-        display: none;
-    }
-    .slick-prev::after {
-      display: none;
-  }
-    .slick-next::before{
-        display: none;
-    }
-
-    .slick-next::after {
-      display: none;
-    }
-
-`

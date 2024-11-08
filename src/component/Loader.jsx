@@ -1,10 +1,8 @@
-import React from 'react'
-import '../assets/body.css'
 
 const Loader = () => {
   return (
-    <div className='loader'> 
-        <img src='images/loader.gif'/>
+    <div className='h-screen w-full flex items-center justify-center'> 
+        <img src='/images/loader.gif' className="h-24"/>
     </div>
   )
 }

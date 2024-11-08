@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
-import '../assets/signIn.css';
 import axios from 'axios';
-import Header from './Header';
-import Footer from './Footer';
 import { useForm } from 'react-hook-form';
 import Cookies from 'js-cookie';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, useNavigate } from 'react-router-dom';
-import FooterCarousel from './FooterCarousel';
-import styled from 'styled-components';
-import Slider from 'react-slick';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { BiX } from 'react-icons/bi';
+import { showToast } from '../utils/Toast';
+import { AiOutlineLoading } from "react-icons/ai";
+
 
 const SignIn = () => {
-    const [showMail, setShowMail] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [resetLoading, setResetLoading] = useState(false);
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
-    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
     const schema = yup.object().shape({
-        email: yup.string().email('Email is not valid').required('Email is required'),
+        email: yup.string().email('Invalid email').required('Email is required'),
         password: yup.string().required('Password is required'),
     });
 
@@ -33,226 +29,119 @@ const SignIn = () => {
 
     const signSubmit = async (data) => {
         try {
-            console.log(import.meta.env.REACT_APP_API_URL)
+            setLoading(true)
             const response = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/login/`, data);
             if (response.data && response.data.key) {
                 Cookies.set('token', response.data.key);
                 Cookies.set('email', data.email);
                 Cookies.set('is_staff', response.data.is_staff);
-                setSuccess('You have successfully logged in');
-                setError('');
-                navigate('/user-dashboard');
+                // setSuccess('Successfully logged in');
+                // setError('');
+                showToast('success', 'Successfully logged in')
+                navigate('/member/dashboard');
             } else {
-                setError('Login failed. Please check your credentials.');
-                setShowModal(true);
+                showToast('error', 'Login failed. Check your credentials.')
+                // setError('Login failed. Check your credentials.');
             }
         } catch (err) {
-            setSuccess('');
-            if (err.response && err.response.data && err.response.data.detail) {
-                setError(err.response.data.detail);
-            } else {
-                setError('An error occurred. Please try again later.');
-            }
-            setShowModal(true);
+            showToast('error', err.response?.data?.detail || 'An error occurred. Please try again.')
+            // setError(err.response?.data?.detail || 'An error occurred. Please try again.');
+        } finally {
+            setLoading(false)
         }
-    };
-
-    const handleClick = () => {
-        setShowMail(!showMail);
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-        setSuccess('');
-        setError('');
-        setShowForgotPassword(false);
     };
 
     const handleForgotPassword = async (email) => {
         try {
-            const response = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/password-reset/`, { email });
-            setSuccess('Password reset email sent. Please check your inbox.');
-            setError('');
-            setShowForgotPassword(false);
+            await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/password-reset/`, { email });
+            setShowForgotPassword(false)
+            showToast('success', 'Password reset email sent. Check your inbox.')
+            // setSuccess('Password reset email sent. Check your inbox.');
+            // setError('');
         } catch (err) {
-            setError(err.response?.data?.message || 'Error sending password reset email.');
-            setSuccess('');
-        } finally {
-            setShowModal(true);
+            showToast('success', err.response?.data?.message || 'Error sending password reset email.')
+            // setError(err.response?.data?.message || 'Error sending password reset email.');
         }
     };
 
-    let settings = {
-        dots: true,
-        infinite: true,
-        speed: 600,
-        slidesToShow: 5,
-        slidesToScroll: 1,
-        autoplay: true,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 4
-                },
-            },
-            {
-                breakpoint: 600,
-                settings: {
-                    slidesToShow: 3
-                }
-            }
-        ]
-    };
+
 
     return (
-        <div>
-            <Header />
-            <div className='sign'>
-                <div className='section-con'>
-                    <h1>Sign In</h1>
-                    <div className='sign-in'>
-                        <div className='gmail'>
-                            {success && <div style={{ color: 'green', fontSize: '17px' }} className='s-e'>{success}</div>}
-                            <button onClick={handleClick}>
-                                <img src='/images/mdi_email-edit-outline.png' alt='Email Icon' />
-                                Sign in with Email
-                            </button>
+        <div className="flex flex-col justify-center items-center min-h-[100dvh] h-full bg-gray-50 p-4">
+            <Link to='/'>
+                <img src="/images/header-logo.jpg" alt="Carousel Item" className="h-[50px] my-10 mx-auto" />
+            </Link>
+            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+                <h1 className="text-4xl font-semibold text-center text-gray-800 mb-4">Sign In</h1>
+                {success && <div className="text-green-600 text-center mb-4">{success}</div>}
+                {error && <div className="text-red-600 text-center mb-4">{error}</div>}
 
-                            <form className='inputs-signin' onSubmit={handleSubmit(signSubmit)}>
-                                <div className='input-img-sign-in'>
-                                    <input
-                                        placeholder='Email'
-                                        name='email'
-                                        type='email'
-                                        {...register("email")}
-                                    />
-                                    <img src='/images/mdi_email-edit-outline.png' alt='Email Icon' />
-                                </div>
-                                <p style={{ color: 'red', fontSize: '15px', textAlign: 'left' }}>{errors.email?.message}</p>
-                                <div className='input-img-sign-in'>
-                                    <input
-                                        placeholder='Password'
-                                        name='password'
-                                        type='password'
-                                        {...register("password")}
-                                    />
-                                    <img src='/images/carbon_password.png' alt='Password Icon' />
-                                </div>
-                                <p style={{ color: 'red', fontSize: '15px', textAlign: 'left' }}>{errors.password?.message}</p>
-                                <button type='submit'>Submit</button>
-                                <p onClick={() => setShowForgotPassword(true)} style={{ cursor: 'pointer', color: 'green', marginTop: '10px', marginLeft: '10px' }}>Forgot Password?</p>
-                            </form>
-                        </div>
-
-                        <div className='alreadylogged'>
-                            <p>Don't have an account? <Link to='/signup'>Sign Up</Link></p>
-                        </div>
+                <form onSubmit={handleSubmit(signSubmit)} className="space-y-4">
+                    <div>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            {...register("email")}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-4 focus:ring-opacity-50 focus:ring-main_color"
+                        />
+                        {errors.email && <i className="text-red-500 text-xs">{errors.email.message}</i>}
                     </div>
-                </div>
-                <Carousel {...settings}>
-                    <img src='/images/header-logo.jpg' />
-                    <img src='/images/logo.png' />
-                    <img src='/images/header-logo.jpg' />
-                    <img src='/images/logo.png' />
-                    <img src='/images/header-logo.jpg' />
-                    <img src='/images/logo.png' />
-                    <img src='/images/header-logo.jpg' />
-                    <img src='/images/logo.png' />
-                    <img src='/images/header-logo.jpg' />
-                    <img src='/images/logo.png' />
-                </Carousel>
+
+                    <div>
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            {...register("password")}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-4 focus:ring-opacity-50 focus:ring-main_color"
+                        />
+                        {errors.password && <i className="text-red-500 text-xs">{errors.password.message}</i>}
+                    </div>
+
+                    <button disabled={loading} type="submit" className="w-full bg-main_color disabled:bg-main_color/50 flex items-center justify-center text-white py-2 rounded-lg  transition">
+                        {loading ? <AiOutlineLoading className="size-7 animate-spin" /> : 'Sign In'}
+                    </button>
+                    <p
+                        onClick={() => setShowForgotPassword(true)}
+                        className="text-sm text-green-600 cursor-pointer text-center mt-2"
+                    >
+                        Forgot Password?
+                    </p>
+                </form>
+
+                <p className="text-center text-gray-600 mt-4">
+                    Don't have an account? <Link to="/auth/signup" className="text-green-600 font-semibold">Sign Up</Link>
+                </p>
             </div>
 
-            {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <p style={{ color: 'red' }}>{error}</p>
-                        <button onClick={closeModal}>Close</button>
-                    </div>
-                </div>
-            )}
+
 
             {showForgotPassword && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Reset Password</h2>
-                        <p>Enter your email to receive a password reset link:</p>
+                <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-xl font-semibold mb-4">Reset Password</h2>
+                            <BiX className='bg-gray-100 rounded-full mb-4' size={30} onClick={() => setShowForgotPassword(false)} />
+                        </div>
+                        <p className="mb-4">Enter your email to receive a password reset link:</p>
                         <form onSubmit={(e) => {
                             e.preventDefault();
                             const email = e.target.elements.email.value;
                             handleForgotPassword(email);
-                        }}>
-                            <input type="email" name="email" placeholder="Your email" required />
-                            <button type="submit">Send Reset Link</button>
+                        }} className="space-y-4">
+                            <input type="email" name="email" placeholder="Your email" required className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-main_color" />
+
+                            <button
+                                type="submit"
+                                className="col-span-2 w-full py-2 bg-main_color text-white font-bold rounded-md hover:bg-green-700 transition duration-300"
+                            >
+                                Send Reset Link
+                            </button>
                         </form>
-                        <button onClick={closeModal}>Close</button>
                     </div>
                 </div>
             )}
-
-            <Footer />
         </div>
     );
 };
 
 export default SignIn;
-
-
-
-const Carousel = styled(Slider)`
-    padding-top: 160px;
-    padding-bottom: 20px;
-    color: #fff;
-    cursor: pointer;
-    width: 100%;
-
-    img{
-        width: 70% !important;
-        height: 40px;
-        padding: 0 50px;
-
-        @media(max-width:600px){
-            width: 20%;
-            padding: 0 20px;
-      }
-    }
-
-    ul li button{
-        &:before{
-            display: none;
-        }
-        display: none;
-    }
-
-    li.slick-active button:before{
-        color: white;
-        display: none;
-    }
-
-    .slick-list{
-        overflow: hidden;
-    }
-
-    .slick-prev{
-      display: none;
-    }
-    .slick-next{
-      display: none;
-      right: 0;
-    }
-    .slick-prev::before{
-        display: none;
-    }
-    .slick-prev::after {
-      display: none;
-  }
-    .slick-next::before{
-        display: none;
-    }
-
-    .slick-next::after {
-      display: none;
-    }
-
-`
