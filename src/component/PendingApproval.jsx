@@ -81,7 +81,7 @@ const PendingApproval = () => {
       const response = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/reject-business/`, {
         email: business.email,
         reason: rejectionReason,
-
+      }, {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`,
         },

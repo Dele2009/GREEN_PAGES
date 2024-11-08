@@ -54,7 +54,7 @@ const UserHeader = ({ isSidebarOpen }) => {
       <Modal show={isNotificationOpen} onClose={toggleNotificationModal} size="lg">
         <Modal.Header>Notifications</Modal.Header>
         <Modal.Body>
-          {/* {notifications.length > 0 ? (
+          {notifications.length > 0 ? (
             <div className="space-y-2">
               {notifications.map((notification, index) => (
                 <div key={index} className="p-2 bg-gray-100 rounded-md">
@@ -64,7 +64,7 @@ const UserHeader = ({ isSidebarOpen }) => {
             </div>
           ) : (
             <p>No notifications available.</p>
-          )} */}
+          )}
         </Modal.Body>
         <Modal.Footer>
           <button onClick={toggleNotificationModal} className="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700">

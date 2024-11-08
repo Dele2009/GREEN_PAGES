@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import Cookies from 'js-cookie';
-import { Modal, Button } from 'flowbite-react';
+import { Modal, Button, Spinner } from 'flowbite-react';
+import { showToast } from '../utils/Toast';
 
 const UserManagePage = () => {
+    const [isDeleting, setIsDeleting] = useState(false)
     const [businesses, setBusinesses] = useState([]);
     const [editingBusiness, setEditingBusiness] = useState(null);
     const [image, setImage] = useState();
@@ -67,12 +69,24 @@ const UserManagePage = () => {
     };
 
     const handleConfirmDelete = async () => {
+        setIsDeleting(true)
         try {
             // Delete API call
+            const response = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/delete-business/`, {
+                email: confirmDelete,
+            }, {
+                headers: {
+                    Authorization: `Token ${Cookies.get('token')}`,
+                }
+            })
             setBusinesses(prevBusinesses => prevBusinesses.filter(business => business.email !== confirmDelete));
+            showToast('success', response?.data?.message || 'Business deleted successfully')
+
+        } catch (err) {
+            showToast('error', err?.message || 'Error deleting business. Please try again.');
+        } finally {
             setConfirmDelete(null);
-        } catch (error) {
-            setError('Error deleting business. Please try again.');
+            setIsDeleting(false)
         }
     };
 
@@ -154,8 +168,10 @@ const UserManagePage = () => {
                         <p>Are you sure you want to delete this business?</p>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button color="failure" onClick={handleConfirmDelete}>Yes, delete</Button>
                         <Button color="light" onClick={() => setConfirmDelete(null)}>Cancel</Button>
+                        <Button className='flex items-center justify-center' color="failure" onClick={handleConfirmDelete}>
+                            {isDeleting ? <Spinner size="sm" className="mr-2" /> : 'Yes, delete'}
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             )}
