@@ -26,25 +26,21 @@ const AdminLogin = () => {
     resolver: yupResolver(schema),
   });
 
-  const handleLogin = async (data) => {
+  const handleLogin = async (formdata) => {
     try {
       setLoading(true)
-      const response = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/admin/`, data);
-      console.log(response)
-      if (response.data && response.data.key) {
-        Cookies.set('token', response.data.key);
-        Cookies.set('is_staff', response.data.user.is_staff);
-        Cookies.set('email', response.data.user.email);
-        Cookies.set('full_name', response.data.user.fullname);
+      const {data} = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/admin/`, formdata);
+      console.log(data)
+        Cookies.set('token', data.key);
+        Cookies.set('is_staff', data.user.is_staff);
+        Cookies.set('email', data.user.email);
+        Cookies.set('full_name', data.user.fullname);
         showToast('success', 'You have successfully logged in');
         // setModalType('success');
         setIsLoggedIn(true);
-      } else {
-        showToast('error', 'Login failed. Please check your credentials.');
-        // setModalType('error');
-      }
+      
     } catch (error) {
-      showToast('error', error.response?.data?.detail || 'An error occurred. Please try again later.');
+      showToast('error', error.response?.data?.message || 'An error occurred. Please try again later.');
       // setModalType('error');
     } finally {
       setLoading(false);

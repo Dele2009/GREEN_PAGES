@@ -24,11 +24,12 @@ function App() {
   return (
     <>
       <ToastContainer
-        autoClose={9000}
-        style={{ zIndex: 9999999999999 }}
+        autoClose={7000}
+        className='z-[9999999999] !w-fit !max-w-[600px]'
         closeOnClick
         newestOnTop
         draggable
+        limit={4}
       />
       <Router>
         <div className="App">

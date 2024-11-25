@@ -33,6 +33,26 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, setSidebarOpen, SidebarLinks })
         }
     ));
 
+    const clickOnLink = (linkName) => {
+        if (!breakpoint('lg')) {
+            toggleSidebar()
+        }
+
+        const unToggledDropdowns = Object.keys(dropDowns).reduce((acc, dropDownKey) => {
+            if (dropDownKey === `is${linkName}Open`) {
+                acc[dropDownKey] = true
+            } else {
+                acc[dropDownKey] = false
+            }
+
+            return acc
+        }, {})
+
+        console.log(unToggledDropdowns)
+
+        setDropDowns(unToggledDropdowns)
+    }
+
     // Adjust sidebar visibility on mount based on screen size
     useEffect(() => {
         if (breakpoint('lg')) {
@@ -80,7 +100,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, setSidebarOpen, SidebarLinks })
                                                 <Link
                                                     key={dropIndex}
                                                     to={dropLink.path}
-                                                    onClick={() => !breakpoint('lg') && toggleSidebar()}
+                                                    onClick={() => clickOnLink(link.name)}
                                                     className="flex items-center text-white p-2 rounded-lg hover:bg-dash_primary"
                                                 >
                                                     <dropLink.icon className="inline mr-2" />
@@ -99,7 +119,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, setSidebarOpen, SidebarLinks })
                                 < li key={index}>
                                     <Link
                                         to={link.path}
-                                        onClick={() => !breakpoint('lg') && toggleSidebar()}
+                                        onClick={() => clickOnLink(link.name)}
                                         className="flex items-center text-white space-x-2 p-2 rounded-lg hover:bg-dash_primary"
                                     >
                                         <link.icon className="text-lg" />

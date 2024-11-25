@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { Button, Table } from 'flowbite-react';
+import { Badge, Button, Table } from 'flowbite-react';
 import { AiOutlineInfoCircle, AiFillExclamationCircle } from 'react-icons/ai';
 import { FaBriefcase, FaBuilding, FaSpinner, FaUserShield } from 'react-icons/fa';
 import { FaArrowsRotate } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
+import StatusBadge from './StatusBadge';
+import { formatDate } from '../utils/helpers';
 
 const UserPendingBusiness = () => {
     const [pendingBusinesses, setPendingBusinesses] = useState([]);
@@ -56,12 +58,12 @@ const UserPendingBusiness = () => {
             <div className="overflow-x-auto">
                 <Table hoverable className="w-full">
                     <Table.Head className="">
-                        <Table.HeadCell className='bg-main_color text-white'>N/O</Table.HeadCell>
-                        <Table.HeadCell className='bg-main_color text-white'>Company Name</Table.HeadCell>
-                        <Table.HeadCell className='bg-main_color text-white'>Email</Table.HeadCell>
-                        <Table.HeadCell className='bg-main_color text-white'>Phone Number</Table.HeadCell>
-                        <Table.HeadCell className='bg-main_color text-white'>Status</Table.HeadCell>
-                        <Table.HeadCell className='bg-main_color text-white'>Date Created</Table.HeadCell>
+                        <Table.HeadCell className='bg-main_color text-center text-white'>N/O</Table.HeadCell>
+                        <Table.HeadCell className='bg-main_color text-center text-white'>Company Name</Table.HeadCell>
+                        <Table.HeadCell className='bg-main_color text-center text-white'>Email</Table.HeadCell>
+                        <Table.HeadCell className='bg-main_color text-center text-white'>Phone Number</Table.HeadCell>
+                        <Table.HeadCell className='bg-main_color text-center text-white'>Status</Table.HeadCell>
+                        <Table.HeadCell className='bg-main_color text-center text-white'>Date Created</Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="bg-white divide-y">
                         {loading ? (
@@ -73,28 +75,34 @@ const UserPendingBusiness = () => {
                             </Table.Row>
                         ) : error ? (
                             <Table.Row>
-                                <Table.Cell colSpan="6" className="flex items-center justify-center py-8 text-red-500">
-                                    <AiFillExclamationCircle className="h-6 w-6 mr-2" />
+                                <Table.Cell colSpan="6" className="text-center py-8 text-red-500">
+                                    <AiFillExclamationCircle className="h-6 w-6 mr-2 inline-block" />
                                     {error}
                                 </Table.Cell>
                             </Table.Row>
                         ) : pendingBusinesses.length > 0 ? (
                             pendingBusinesses.map((business, index) => (
                                 <Table.Row key={index}>
-                                    <Table.Cell>{index + 1}</Table.Cell>
-                                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                    <Table.Cell className="text-center">{index + 1}</Table.Cell>
+                                    <Table.Cell className="text-center whitespace-nowrap ">
                                         {business.companyname}
                                     </Table.Cell>
-                                    <Table.Cell>{business.email}</Table.Cell>
-                                    <Table.Cell>{business.phonenumber}</Table.Cell>
-                                    <Table.Cell className="capitalize">{business.status}</Table.Cell>
-                                    <Table.Cell>{new Date(business.created_at).toLocaleDateString()}</Table.Cell>
+                                    <Table.Cell className="text-center">{business.email}</Table.Cell>
+                                    <Table.Cell className="text-center">{business.phonenumber}</Table.Cell>
+                                    <Table.Cell>
+                                        <StatusBadge
+                                            color='warning'
+                                            beeperColor='bg-yellow-300'
+                                            label={business.status}
+                                        />
+                                    </Table.Cell>
+                                    <Table.Cell className="text-center">{formatDate(business.created_at)}</Table.Cell>
                                 </Table.Row>
                             ))
                         ) : (
                             <Table.Row>
-                                <Table.Cell colSpan="6" className="flex items-center justify-center py-8 text-gray-500">
-                                    <AiOutlineInfoCircle className="h-6 w-6 mr-2" />
+                                <Table.Cell colSpan="6" className="text-center flex items-center justify-center py-8 text-gray-500">
+                                    <AiOutlineInfoCircle className=" inline-block h-6 w-6 mr-2" />
                                     No pending businesses found.
                                 </Table.Cell>
                             </Table.Row>

@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaEdit, FaTrash, FaPause, FaPlay, FaEye, FaPlusSquare, FaSpinner, FaExclamationTriangle, FaBoxOpen } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPause, FaPlay, FaEye, FaPlusSquare, FaSpinner, FaExclamationTriangle, FaBoxOpen, FaCheck, FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Button, Modal, Table, Label, Select, Textarea, Badge } from 'flowbite-react';
 import { FaArrowsRotate } from 'react-icons/fa6';
 import EditBusinessModal from './EditBusinessModal';
 import { showToast } from '../utils/Toast';
+import { AiOutlineLoading } from 'react-icons/ai';
+import StatusBadge from './StatusBadge';
+import { formatDate } from '../utils/helpers';
 
 const AllBusinesses = () => {
   const [apiBusinesses, setApiBusinesses] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
   const [editedBusiness, setEditedBusiness] = useState({});
+  const [businessDetails, setBusinessDetails] = useState({});
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [imgEdit, setImgEdit] = useState({
     logo: '',
@@ -24,6 +28,12 @@ const AllBusinesses = () => {
     ceoImg: ''
   })
 
+  const [isModalLoading, setIsModalLoading] = useState(false);
+
+  const [isApproveOpen, setIsApproveOpen] = useState(false);
+  const [approvalIndex, setApprovalIndex] = useState(null);
+
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
   const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
@@ -32,8 +42,7 @@ const AllBusinesses = () => {
   const [viewBusiness, setViewBusiness] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [editMode, setEditMode] = useState(false);
-  const [businessDetails, setBusinessDetails] = useState({});
+  const [editMode, setEditMode] = useState(true);
 
 
   const [sortBy, setSortBy] = useState('all')
@@ -63,14 +72,11 @@ const AllBusinesses = () => {
     fetchData();
   }, [sortBy]);
 
-  const handleSort = (e) => {
-    setSortBy(e.target.value)
-    console.log(e.target.value)
-    // fetchData()
-  }
+
 
 
   const removeApiBusiness = async () => {
+    setIsModalLoading(true)
     const businessEmail = apiBusinesses[deleteIndex].email;
     try {
       await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/admin-delete-business/`, { email: businessEmail }, {
@@ -83,6 +89,7 @@ const AllBusinesses = () => {
       setErrorMessage("Error deleting business. Please try again.");
     } finally {
       setIsDeleteModalOpen(false);
+      setIsModalLoading(false)
     }
   };
 
@@ -91,6 +98,7 @@ const AllBusinesses = () => {
     // const business = apiBusinesses[index];
     console.log(business)
     setEditedBusiness({ ...business });
+    setBusinessDetails({ ...business });
     setImgEditPreview({
       logo: `${import.meta.env.REACT_APP_API_URL}${business.logo}`,
       ceoImg: `${import.meta.env.REACT_APP_API_URL}${business.ceoImg}`
@@ -100,6 +108,7 @@ const AllBusinesses = () => {
 
   const handleEditInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(name,':', value)
     setEditedBusiness(prev => ({ ...prev, [name]: value }));
   };
 
@@ -110,7 +119,7 @@ const AllBusinesses = () => {
   };
 
   const handleUpdateBusiness = async () => {
-    const {ceoImg, logo, ...data} = editedBusiness
+    const { ceoImg, logo, ...data } = editedBusiness
     const formData = new FormData();
 
     Object.keys(data).forEach(key => {
@@ -124,32 +133,38 @@ const AllBusinesses = () => {
       formData.append('ceoImg', imgEdit.ceoImg)
     }
 
-    try {
+    setIsModalLoading(true)
+    console.log(editedBusiness);
+    for(const [name, value] of formData.entries()){
+      console.log(name, value)
+    }
+   try {
       let response = await axios.put(`${import.meta.env.REACT_APP_API_URL}/api/admin-edit-business/${editedBusiness.id}/`, formData, {
         headers: {
-          // 'Content-Type': 'multipart/form-data',
           Authorization: `Token ${Cookies.get('token')}`,
         },
       });
       console.log(response)
-      // const newLogo = imgEditPreview.logo || 
       // setEditedBusiness(prev => prev.filter(b => b.id === editedBusiness.id));
-      setApiBusinesses(prev => prev.map(b => (b.id === editedBusiness.id ? {...editedBusiness} : b)));
+      setApiBusinesses(prev => prev.map(b => (b.id === editedBusiness.id ? { ...editedBusiness } : b)));
       showToast('success', response?.data?.message || 'Business updated successfully');
     } catch (error) {
       console.log(error)
       showToast('error', 'Failed to update business');
     } finally {
       setIsEditModalOpen(false);
+      setEditMode(true);
+      setIsModalLoading(false);
     }
   };
 
   const handleSuspend = async (index) => {
-    const businessEmail = apiBusinesses[index].email;
+    const email = apiBusinesses[index].email;
+    setIsModalLoading(true)
     try {
       await axios.post(
         `${import.meta.env.REACT_APP_API_URL}/api/admin-business-action/`,
-        { email: businessEmail, reason: suspendReason },
+        { email, reason: suspendReason },
         {
           params: {
             q: 'suspended'
@@ -162,17 +177,25 @@ const AllBusinesses = () => {
       setApiBusinesses(prev =>
         prev.map((business, i) => (i === index ? { ...business, status: "suspended" } : business))
       );
-      setIsSuspendModalOpen(false);
       setSuspendReason('');
+      showToast('success', 'Business suspention was successfully')
     } catch (error) {
-      setErrorMessage("Error suspending business. Please try again.");
+      showToast('error', "Error suspending business. Please try again.");
+    } finally {
+      setIsSuspendModalOpen(false);
+      setIsModalLoading(false)
     }
   };
 
-  const handleStatusChange = async (index) => {
-    const businessEmail = apiBusinesses[index].email;
+  const handleToggleApprove = (index) => {
+    setIsApproveOpen(true)
+    setApprovalIndex(index)
+  }
+  const handleStatusChange = async () => {
+    const email = apiBusinesses[approvalIndex].email;
+    setIsModalLoading(true)
     try {
-      await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/admin-business-action/`, { email: businessEmail }, {
+      await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/admin-business-action/`, { email }, {
         params: {
           q: 'unsuspended'
         },
@@ -181,10 +204,14 @@ const AllBusinesses = () => {
         },
       });
       setApiBusinesses(prevBusinesses =>
-        prevBusinesses.map((business, i) => (i === index ? { ...business, status: "verified" } : business))
+        prevBusinesses.map((business, i) => (i === approvalIndex ? { ...business, status: "verified" } : business))
       );
+      showToast('success', 'Business activated successfully')
     } catch (error) {
-      setErrorMessage("Error reactivating business. Please try again.");
+      showToast('error', "Error activating business. Please try again.");
+    } finally {
+      setIsApproveOpen(false)
+      setIsModalLoading(false)
     }
   };
 
@@ -212,8 +239,7 @@ const AllBusinesses = () => {
             <div className="block">
               <Label htmlFor="sortby" value="Sort by: " />
             </div>
-            <Select value={sortBy} id="sortby" onChange={handleSort}>
-              <option>--Choose---</option>
+            <Select className='border rounded-lg !border-main_color' value={sortBy} id="sortby" onChange={(e) => setSortBy(e.target.value)}>
               <option value='all'>All</option>
               <option value='verified'>Verified</option>
               <option value='rejected'>Rejected</option>
@@ -253,7 +279,7 @@ const AllBusinesses = () => {
               <Table.Row>
                 <Table.Cell colSpan="7" className="bg-white text-center py-4 text-gray-600">
                   <FaBoxOpen className="text-2xl inline-block mr-2" />
-                  No verified businesses available.
+                  No {sortBy === 'all' ? '' : sortBy} businesses available.
                 </Table.Cell>
               </Table.Row>
             ) : (
@@ -264,34 +290,31 @@ const AllBusinesses = () => {
                   <Table.Cell className="text-center">{business.email}</Table.Cell>
                   <Table.Cell className="text-center">{business.phonenumber}</Table.Cell>
                   <Table.Cell>
-                    <div className="w-fit m-auto relative">
-                      <Badge
-                        size='sm'
-                        color={`${business.status === 'verified' ? 'success' : (business.status === 'suspended') ? 'warning' : 'failure'}`}
-                        className="w-fit scale-90"
-                      >
-                        {business.status}
-                      </Badge>
-                      <Badge
-                        size='xs'
-                        // color={`${business.status === 'verified' ? 'success' : (business.status === 'suspended') ? 'warning' : 'failure'}`}
-                        className={`size-4 scale-50 animate-pulse rounded-full absolute top-0 -right-1
-                          ${business.status === 'verified' ? 'bg-main_color' : (business.status === 'suspended') ? 'bg-yellow-300' : 'bg-[#ff0000]'}
-                          `}
-                      >
-                      </Badge>
-                    </div>
+                    <StatusBadge
+                      color={
+                        business.status === 'verified' ? 'success' : (business.status === 'suspended') ? 'warning' : 'failure'
+                      }
+                      beeperColor={
+                        business.status === 'verified' ? 'bg-main_color' : (business.status === 'suspended') ? 'bg-yellow-300' : 'bg-[#ff0000]'
+                      }
+                      label={business.status}
+                    />
                   </Table.Cell>
-                  <Table.Cell className="text-center">{business.created_at}</Table.Cell>
+                  <Table.Cell className="text-center">{formatDate(business.created_at)}</Table.Cell>
                   <Table.Cell className="text-center">
                     <div className="flex items-center justify-center space-x-4">
-                      {/* <FaEye className="cursor-pointer text-gray-700 hover:text-gray-900" onClick={() => handleViewBusiness(business)} /> */}
-                      <FaEye className="cursor-pointer text-yellow-300" onClick={() => startEditing(business)} />
-                      <FaTrash className="cursor-pointer text-red-600 hover:text-red-800" onClick={() => { setDeleteIndex(index); setIsDeleteModalOpen(true); }} />
+                      <FaEye title="View / Edit" className="cursor-pointer text-yellow-300" onClick={() => startEditing(business)} />
+                      <FaTrash title="Delete" className="cursor-pointer text-red-600 hover:text-red-800" onClick={() => { setDeleteIndex(index); setIsDeleteModalOpen(true); }} />
                       {business.status === "verified" ? (
-                        <FaPause className="cursor-pointer" onClick={() => { setSuspendIndex(index); setIsSuspendModalOpen(true); }} />
+                        <FaPause title="Suspend" className="cursor-pointer" onClick={() => { setSuspendIndex(index); setIsSuspendModalOpen(true); }} />
+                      ) : business.status === "suspended" ? (
+                        <FaPlay title="Unsuspend" className="cursor-pointer" onClick={() => handleToggleApprove(index)} />
                       ) : (
-                        <FaPlay className="cursor-pointer" onClick={() => handleStatusChange(index)} />
+                        <FaCheckCircle
+                          className="cursor-pointer text-green-500"
+                          title="Approve"
+                          onClick={() => handleToggleApprove(index)}
+                        />
                       )}
                     </div>
                   </Table.Cell>
@@ -308,12 +331,23 @@ const AllBusinesses = () => {
         closeModal={() => {
           setEditedBusiness({});
           setIsEditModalOpen(false);
-          
+          setEditMode(true);
+          setBusinessDetails({});
         }}
         details={editedBusiness}
+        isViewing={editMode}
+        toggleMode={() => {
+          if (!editMode) {
+            setEditMode(true)
+            setEditedBusiness(businessDetails)
+          } else {
+            setEditMode(false)
+          }
+        }}
         imagePreview={{ ...imgEditPreview }}
         onFileFieldChange={handleEditFileChange}
         onTextFieldChange={handleEditInputChange}
+        isSaving={isModalLoading}
         onSaveChanges={handleUpdateBusiness}
       />
       {/* <Modal position="center" show={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
@@ -327,9 +361,23 @@ const AllBusinesses = () => {
       <Modal position="center" show={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
         <Modal.Header>Confirm Delete</Modal.Header>
         <Modal.Body>Are you sure you want to delete this business?</Modal.Body>
-        <Modal.Footer>
-          <button className="text-red-500" onClick={removeApiBusiness}>Yes, Delete</button>
-          <button onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
+        <Modal.Footer className='justify-end'>
+          <Button outline color='gray' onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
+          <Button className="text-white bg-[#ff0000]" onClick={removeApiBusiness}>
+            {isModalLoading ? <AiOutlineLoading className="size-7 animate-spin" /> : 'Yes, Delete'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal position="center" show={isApproveOpen} onClose={() => setIsApproveOpen(false)}>
+        <Modal.Header>Approval Confirmation</Modal.Header>
+        <Modal.Body>Are you sure you want to Approve this business?</Modal.Body>
+        <Modal.Footer className='justify-end'>
+          <Button outline color='gray' onClick={() => setIsApproveOpen(false)}>Cancel</Button>
+          <Button className="text-white bg-main_color" onClick={handleStatusChange}>
+            {isModalLoading ? <AiOutlineLoading className="size-7 animate-spin" /> : 'Yes, Approve'}
+          </Button>
         </Modal.Footer>
       </Modal>
 
@@ -342,7 +390,10 @@ const AllBusinesses = () => {
         </Modal.Body>
         <Modal.Footer className='justify-end'>
           <Button outline color='gray' onClick={() => setIsSuspendModalOpen(false)}>Cancel</Button>
-          <Button className='!bg-[#ff0000]' onClick={() => handleSuspend(suspendIndex)}>Suspend</Button>
+          <Button className='!bg-[#ff0000]' onClick={() => handleSuspend(suspendIndex)}
+          >
+            {isModalLoading ? <AiOutlineLoading className="size-7 animate-spin" /> : 'Suspend'}
+          </Button>
         </Modal.Footer>
       </Modal>
 

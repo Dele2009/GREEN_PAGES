@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FaBoxOpen, FaEdit, FaExclamationTriangle, FaSpinner, FaTrash, FaUserCircle } from 'react-icons/fa'
-import { Button, Modal, Table } from 'flowbite-react'
+import { FaBoxOpen, FaCheckCircle, FaEdit, FaExclamationTriangle, FaSpinner, FaTrash, FaUserCircle } from 'react-icons/fa'
+import { Button, Modal, Table, TextInput } from 'flowbite-react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { FaArrowsRotate } from 'react-icons/fa6'
+import { formatDate } from '../utils/helpers'
+import { AiOutlineLoading } from 'react-icons/ai'
+import { showToast } from '../utils/Toast'
 
 const AllUser = () => {
   const [editingUser, setEditingUser] = useState(null)
   const [apiUser, setApiUser] = useState([])
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deleteIndex, setDeleteIndex] = useState(null)
+
   const [loading, setLoading] = useState(false)
+  const [isModalLoading, setIsModalLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const FetchUsers = async () => {
@@ -39,6 +45,7 @@ const AllUser = () => {
 
   const removeApiUser = async () => {
     const userEmail = apiUser[deleteIndex].email
+    setIsModalLoading(true)
     try {
       await axios.delete(`${import.meta.env.REACT_APP_API_URL}/api/delete/`, {
         headers: {
@@ -48,11 +55,13 @@ const AllUser = () => {
       })
       const updatedApiUser = apiUser.filter((_, i) => i !== deleteIndex)
       setApiUser(updatedApiUser)
+      showToast('success', "Profile deleted successfully")
     } catch (error) {
-      setError("Failed to delete user. Please try again later.")
+      showToast('error',"Failed to delete user. Please try again later.")
       console.error("Error deleting user:", error)
     } finally {
       setIsDeleteModalOpen(false)
+      setIsModalLoading(false)
     }
   }
 
@@ -67,24 +76,37 @@ const AllUser = () => {
   }
 
   const handleApiSaveClick = async () => {
-    const userEmail = editingUser.email
+    // const userEmail = editingUser.email
+    const user = apiUser.find((user)=> user.id === editingUser.id)
+    console.log(user, editingUser)
+    setIsModalLoading(true)
     try {
-      await axios.put(`${import.meta.env.REACT_APP_API_URL}/api/edit-user/`, {
-        email: userEmail,
-        ...editingUser
-      }, {
-        headers: {
-          Authorization: `Token ${Cookies.get('token')}`
+      console.log(
+        `${import.meta.env.REACT_APP_API_URL}/api/edit-user/${editingUser.id}`
+      );
+      await axios.put(
+        `${import.meta.env.REACT_APP_API_URL}/api/edit-user/${editingUser.id}/`,
+        {
+          // email: userEmail,
+          ...editingUser,
+        },
+        {
+          headers: {
+            Authorization: `Token ${Cookies.get("token")}`,
+          },
         }
-      })
+      );
       const updatedApiUser = apiUser.map((user) =>
         user.email === editingUser.email ? editingUser : user
       )
       setApiUser(updatedApiUser)
-      setIsEditModalOpen(false)
+      showToast('success',"Profile updated successfully")
     } catch (error) {
-      setError("Failed to update user. Please try again later.")
+      showToast('error',"Failed to update user. Please try again later.")
       console.error("Error updating user:", error)
+    } finally {
+      setIsEditModalOpen(false)
+      setIsModalLoading(false)
     }
   }
 
@@ -147,7 +169,7 @@ const AllUser = () => {
                   <Table.Cell className='text-center'>{index + 1}</Table.Cell>
                   <Table.Cell className='text-center'>{user.fullname}</Table.Cell>
                   <Table.Cell className='text-center'>{user.email}</Table.Cell>
-                  <Table.Cell className='text-center'>{user.date}</Table.Cell>
+                  <Table.Cell className='text-center'>{formatDate(user.date)}</Table.Cell>
                   <Table.Cell className='text-center'>
                     <div className="flex items-center justify-center space-x-4">
                       <FaEdit
@@ -176,46 +198,47 @@ const AllUser = () => {
           <div className="space-y-4">
             <div>
               <label className="block">Full Name</label>
-              <input
+              <TextInput
                 type="text"
                 name="fullname"
                 value={editingUser?.fullname || ''}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                // className="w-full p-2 border rounded"
                 placeholder="Full Name"
               />
             </div>
             <div>
               <label className="block">Email</label>
-              <input
+              <TextInput
                 type="email"
                 name="email"
                 value={editingUser?.email || ''}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                // className="w-full p-2 border rounded"
                 placeholder="Email"
               />
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <button
+        <Modal.Footer className='justify-end'>
+          <Button
+            color='gray'
+            outline
             onClick={() => setIsEditModalOpen(false)}
-            className="bg-gray-500 text-white px-4 py-2 rounded"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleApiSaveClick}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-main_color text-white rounded"
           >
-            Save Changes
-          </button>
+            {isModalLoading ? <AiOutlineLoading className="size-7 animate-spin" /> : ' Save changes'}
+          </Button>
         </Modal.Footer>
       </Modal>
 
       {/* Delete Confirmation Modal */}
-      <Modal position="center" show={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
+      {/* <Modal position="center" show={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
         <Modal.Header>Confirm Deletion</Modal.Header>
         <Modal.Body>
           <p>Are you sure you want to delete this user?</p>
@@ -231,7 +254,34 @@ const AllUser = () => {
             onClick={removeApiUser}
             className="bg-red-500 text-white px-4 py-2 rounded"
           >
-            Delete
+            {isModalLoading ? <AiOutlineLoading className="size-7 animate-spin" /> : ' Delete'}
+          </button>
+        </Modal.Footer>
+      </Modal> */}
+
+      <Modal position="center" show={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
+        <Modal.Header className="">
+          <div className="flex justify-center items-center gap-2">
+            <FaCheckCircle className="text-main_color text-xl" />
+            <span>Confirm Request</span>
+          </div>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="text-gray-700">This Action can not be reverse, are you sure you want to delete this user?</p>
+        </Modal.Body>
+        <Modal.Footer className="flex justify-end gap-3">
+          <button
+            onClick={() => setIsDeleteModalOpen(false)}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+          >
+            Cancel
+          </button>
+          <button
+            disabled={isModalLoading}
+            onClick={removeApiUser}
+            className="px-4 py-2 bg-[#ff0000] text-white rounded-md transition"
+          >
+            {isModalLoading ? <AiOutlineLoading className="size-7 animate-spin" /> : ' Confirm'}
           </button>
         </Modal.Footer>
       </Modal>

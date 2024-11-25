@@ -21,10 +21,10 @@ const AddAdmin = () => {
         resolver: yupResolver(schema),
     })
 
-    const submit = async (data) => {
+    const submit = async (formdata) => {
         setLoading(true)
         try {
-            const response = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/add-user/`, data, {
+            const {data} = await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/add-user/`, formdata, {
                 params: {
                     user_type: 'staff'
                 },
@@ -32,11 +32,11 @@ const AddAdmin = () => {
                     Authorization: `Token ${Cookies.get('token')}`,
                 }
             })
-            console.log(response)
-            showToast('success', 'Admin account created successfully')
+            console.log(data)
+            showToast('success', data?.message)
             reset()
         } catch (error) {
-            showToast('error', error.response?.status === 400 ? 'Email already exists' : 'An error occurred. Please try again')
+            showToast('error', error.response?.data?.message)
         } finally {
             setLoading(false)
         }

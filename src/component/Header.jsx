@@ -62,7 +62,7 @@ const Header = () => {
                                     <FaCaretDown />
                                 </div>
                             )}>
-                            {/* <Dropdown.Item>Dashboard</Dropdown.Item> */}
+                                <Dropdown.Item  as={Link} to={`/${isAdmin ? 'admin' : 'member'}/dashboard`}>Dashboard</Dropdown.Item>
                             <Dropdown.Item>
                                 <Button onClick={toggleModal} className='w-full flex justify-center items-center' color="failure">
                                     <FaSignOutAlt className="mr-4 size-5" />

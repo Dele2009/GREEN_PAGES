@@ -29,6 +29,7 @@ import UserLayout from './layouts/UserLayout';
 import ProtectedRoute from './ProtectedRoute';
 import AdminLayout from './layouts/AdminLayout';
 import ERROR_4_0_4 from './component/404';
+import OTPPage from './component/VerifyOtp';
 
 
 
@@ -52,6 +53,7 @@ function AppRoutes() {
                <Route path='/auth' element={<AuthLayout />}>
                     <Route path='signin' element={<SignIn />} />
                     <Route path='signup' element={<SignUp />} />
+                    <Route path='verify-otp' element={<OTPPage />} />
                </Route>
 
                <Route
@@ -66,7 +68,7 @@ function AppRoutes() {
                     <Route path='all-businesses' element={<UserManagePage />} />
                     <Route path='pending-businesses' element={<UserPendingBusiness />} />
                     <Route path='add-business' element={<UserAddBusiness />} />
-                    <Route path='user-logout' element={<UserLogout />} />
+                    {/* <Route path='user-logout' element={<UserLogout />} /> */}
                </Route>
 
                <Route path='/admin-login' element={<AdminLogin />} />

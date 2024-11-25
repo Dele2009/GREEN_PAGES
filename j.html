@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+     <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Document</title>
+          <style>
+               form{
+                    background-color: yellow;
+                    width: fit-content;
+                    padding: 20px;
+                    border-radius: 10px;
+               }
+               label{
+                    padding-bottom: 70px;
+                    font-size: 15px;
+               }
+               input{
+                    width: 100%;
+                    border: none;
+                    padding: 8px 4px;
+                    border-radius: 4px;
+                    outline: none;
+               }
+               input::placeholder{
+
+               }
+               input:focus{
+                    outline: 1px solid green ;
+               }
+               input[type='text']{
+                    background-color: green;
+                    color: white;
+               }
+               input[name='number']{
+                    background-color: purple;
+                    color: white;
+               }
+               button{
+                    width: 100%;
+                    border: none;
+                    background-color: red;
+                    color: white;
+                    padding: 6px 0;
+                    border-radius: 10px;
+               }
+               /* div{
+                    background-color: red;
+               } */
+               img{
+                    width: 200px;
+                    height: 200px;
+               }
+
+              #section-1{
+                    background-color: red;
+                    /* position: relative;
+                    left: 800px; */
+                    position: sticky;
+                    top: 20px;
+               }
+               .section-2{
+                    background-color: green;
+                    /* position: absolute;
+                    left: 300px;
+                    z-index: -1; */
+               }
+               .section-3{
+                    background-color: yellow;
+                    z-index: 1;
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+               }
+
+
+               .sub-section{
+                    width: 300px;
+                    border: 3px solid purple;
+               }
+
+               .img-1{
+                    float: right;
+               }
+               .img-2{
+                    float: left;
+               }
+               .img-3{
+                    float: right;
+               }
+          </style>
+     </head>
+     <body>
+          <form>
+               <label for="name">Enter your name</label><br>
+               <input type="text" name="name" id="name"> <br><br>
+               <label for="number">Enter your Phone-number</label><br>
+               <input type="number" name="number" id="number"><br><br>
+               <label for="email">Enter your email</label><br>
+               <input type="email" name="email" id="email"><br><br>
+               <label for="password">Enter your 6 digits password</label><br>
+               <input type="password" name="password" id="password"> <br><br>
+               <button>
+                    submit
+               </button>
+          </form>
+
+          <!-- <div id="section-1" class="sub-section">
+               <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Labore, omnis.
+               </p>
+               <img src="./public/logo192.png" alt="img">
+          </div>
+          <div class="section-2 sub-section">
+               <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Labore, omnis.
+               </p>
+               <img src="./public/logo512.png" alt="img">
+          </div>
+          <div class="section-3 sub-section">
+               <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Labore, omnis.
+               </p>
+               <img src="./public/images/advertise-here.png" alt="img">
+          </div> -->
+
+          <p>
+               Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis
+               doloribus optio id! Fugiat itaque repellendus, commodi iste
+               beatae dolor nemo similique temporibus saepe ut quisquam numquam
+               ipsam consectetur sed! Maiores iusto ullam quas quasi eum rem
+               ipsa alias repellat odit pariatur maxime dolorem, modi
+               <img src="./public/images/about.jpg" alt class="img-1">
+               repudiandae dolores assumenda illum laudantium omnis odio cumque
+               fuga nam beatae qui tempore! Ab molestiae perspiciatis accusamus
+               consectetur recusandae dolore, quo consequatur. Beatae veritatis
+               sit odio eligendi mollitia ex alias quasi ut est non facere
+               natus, earum accusantium temporibus omnis nobis deserunt neque
+               amet excepturi possimus. Veritatis impedit magnam ratione tenetur
+               officiis eaque libero reiciendis necessitatibus odio illo
+               accusamus, doloremque laudantium cupiditate odit, ipsum laborum
+               quibusdam qui enim quis perferendis? Itaque adipisci maiores,
+               officiis eaque libero reiciendis necessitatibus odio illo
+               accusamus, doloremque laudantium cupiditate odit, ipsum laborum
+               quibusdam qui enim quis perferendis? Itaque adipisci maiores,
+               officiis eaque libero reiciendis necessitatibus odio illo
+               accusamus, doloremque laudantium cupiditate odit, ipsum laborum
+               quibusdam qui enim quis perferendis? Itaque adipisci maiores,
+               officiis eaque libero reiciendis necessitatibus odio illo
+               accusamus, doloremque laudantium cupiditate odit, ipsum laborum
+               quibusdam qui enim quis perferendis? Itaque adipisci maiores,
+               officiis eaque libero reiciendis necessitatibus odio illo
+               accusamus, doloremque laudantium cupiditate odit, ipsum laborum
+               quibusdam qui enim quis perferendis? Itaque adipisci maiores,
+               officiis eaque libero reiciendis necessitatibus odio illo
+               accusamus, doloremque laudantium cupiditate odit, ipsum laborum
+               quibusdam qui enim quis perferendis? Itaque adipisci maiores,
+               <img src="./public/images/about.jpg" alt class="img-2">
+               assumenda officia optio ipsam quam unde sapiente impedit totam
+               quidem animi exercitationem blanditiis reprehenderit labore
+               consequatur harum, corrupti excepturi quo voluptatum corporis.
+               Magnam facilis reprehenderit corporis culpa laudantium sit
+               dignissimos, vitae cum perspiciatis officia perferendis, esse
+               repellendus mollitia magni cumque deserunt aliquid minima dicta
+               sapiente nostrum. Nam nulla, officia enim unde totam placeat
+               officiis molestias vero dolorum aperiam repellendus quisquam
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               libero numquam odio iste dolores! Pariatur, optio? Suscipit
+               doloremque sit cumque quibusdam amet rerum quas dolore dicta ad!
+               Quasi eos mollitia suscipit corporis totam rerum quidem eveniet
+               <img src="./public/images/about.jpg" alt class="img-3">
+               soluta? Beatae dolorem excepturi illum illo eligendi quo, fugit
+               debitis numquam dicta. Fugiat reprehenderit obcaecati iste nisi
+               aut similique doloribus cupiditate consectetur enim blanditiis
+               illum aperiam quaerat ipsa quod minus cumque nulla unde sapiente
+               voluptatem, excepturi animi quasi non? Veritatis officia ratione
+               aliquam, id sit molestiae repudiandae quaerat modi esse aperiam
+               nulla eum dolorem. Quaerat officia minus a fugit natus quia
+               quibusdam eius ea, sit quisquam officiis, veniam provident
+               impedit quas nulla voluptate cum est labore aspernatur illum
+               dolorum ex voluptatem. Commodi illum maiores dolor voluptas
+               soluta nulla, alias ratione ea aut distinctio esse dolores
+               quibusdam.
+          </p>
+     </body>
+</html>
