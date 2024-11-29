@@ -51,14 +51,15 @@ const AddBusiness = () => {
       .string()
       .url(
         'Invalid URL, must contain "https://" & domain extension e.g ".com", ".net"'
-      )
-      .required("URL is required"),
+      ),
     ceoImg: yup.string(),
     productImage: yup.string(),
     staffstrength: yup.string().required("Required!"),
     address: yup.string().required("Required!"),
     isAuthorized: yup.boolean().oneOf([true], "You must authorize to proceed"),
   });
+
+  console.log(schema);
 
   const {
     watch,
@@ -255,7 +256,7 @@ const AddBusiness = () => {
               <Label htmlFor="whatsappnumber" value="WhatsApp Number" />
               <TextInput
                 type="text"
-                placeholder="Optional"
+                placeholder="11-digit whatsapp phone number"
                 {...register("whatsappnumber")}
                 color={errors.whatsappnumber ? "failure" : ""}
                 helperText={errors.whatsappnumber?.message}
@@ -273,7 +274,7 @@ const AddBusiness = () => {
                             helperText={errors.categoryofbusiness?.message}
                         /> */}
             <Controller
-              name="categoryofbusiness"
+              name="categor yofbusiness"
               control={control}
               render={({ field }) => (
                 <DropdownInput
@@ -291,6 +292,7 @@ const AddBusiness = () => {
                 />
               )}
             />
+
             {errors.categoryofbusiness?.message && (
               <p className="text-red-600 text-sm ">
                 {errors.categoryofbusiness?.message}

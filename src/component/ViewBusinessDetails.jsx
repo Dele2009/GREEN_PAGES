@@ -89,11 +89,20 @@ const ViewBusinessDetails = ({
                               </div>
 
                               {/* Category */}
-                              <div className="flex col-span-2 items-center p-4 rounded-lg border border-gray-200 shadow-sm bg-gray-50">
+                              <div className="flex md:col-span-2 items-center p-4 rounded-lg border border-gray-200 shadow-sm bg-gray-50">
                                    <FaBusinessTime className="text-main_color mr-3 text-3xl" />
                                    <div>
                                         <p className="text-sm font-semibold text-gray-500">Category</p>
                                         <p className="text-gray-800">{details.categoryofbusiness || 'N/A'}</p>
+                                   </div>
+                              </div>
+
+                               {/* Sector */}
+                              <div className="flex items-center p-4 rounded-lg border border-gray-200 shadow-sm bg-gray-50">
+                                   <FaChartLine className="text-main_color mr-3 text-3xl" />
+                                   <div>
+                                        <p className="text-sm font-semibold text-gray-500">Sector</p>
+                                        <p className="text-gray-800">{details.sector || 'N/A'}</p>
                                    </div>
                               </div>
 
@@ -143,14 +152,7 @@ const ViewBusinessDetails = ({
                                    </div>
                               </div>
 
-                              {/* Status */}
-                              <div className="flex items-center p-4 rounded-lg border border-gray-200 shadow-sm bg-gray-50">
-                                   <FaChartLine className="text-main_color mr-3 text-3xl" />
-                                   <div>
-                                        <p className="text-sm font-semibold text-gray-500">Status</p>
-                                        <p className="text-gray-800">{details.status || 'N/A'}</p>
-                                   </div>
-                              </div>
+                             
 
                               
 

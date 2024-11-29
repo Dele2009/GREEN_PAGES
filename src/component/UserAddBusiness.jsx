@@ -51,8 +51,7 @@ const UserAddBusiness = () => {
       .string()
       .url(
         'Invalid URL, must contain "https://" & domain extension e.g ".com", ".net"'
-      )
-      .required("URL is required"),
+      ),
     ceoImg: yup.string(),
     productImage: yup.string(),
     staffstrength: yup.string().required("Required!"),
@@ -251,7 +250,7 @@ const UserAddBusiness = () => {
               <Label htmlFor="whatsappnumber" value="WhatsApp Number" />
               <TextInput
                 type="text"
-                placeholder="Optional"
+                placeholder="11-digit WhatsApp phone number"
                 {...register("whatsappnumber")}
                 color={errors.whatsappnumber ? "failure" : ""}
                 helperText={errors.whatsappnumber?.message}
@@ -276,6 +275,7 @@ const UserAddBusiness = () => {
                         ? "border-red-500"
                         : "border-gray-500"
                     } !rounded-lg`,
+                    input: `${errors.categoryofbusiness ? "bg-red-50" : ""}`,
                   }}
                 />
               )}
@@ -285,7 +285,7 @@ const UserAddBusiness = () => {
                 {errors.categoryofbusiness?.message}
               </p>
             )}
-            <p>{watch("categoryofbusiness")}</p>
+            {/* <p>{watch("categoryofbusiness")}</p> */}
           </div>
           {/* <div>
             <Label htmlFor="categoryofbusiness" value="Business Category" />

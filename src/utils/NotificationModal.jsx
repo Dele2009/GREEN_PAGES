@@ -14,7 +14,10 @@ const NotificationsModal = ({
 
   const readNotification = async (id) => {
     await axios.get(
-      `${import.meta.env.REACT_APP_API_URL}/api/read-notification/${id}/`
+      `${import.meta.env.REACT_APP_API_URL}/api/read-notification/${id}/`,
+      {
+        headers: { Authorization: `Token ${Cookies.get("token")}` },
+      }
     );
   };
   

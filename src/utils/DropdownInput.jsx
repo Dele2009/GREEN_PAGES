@@ -24,7 +24,7 @@ const DropdownInput = ({
   useEffect(() => {
     console.log(defaultValue)
     setInputValue(defaultValue);
-  }, [defaultValue]);
+  }, []);
   // useEffect(() => {
   //   if (!isMultiple) {
   //     register.onChange
@@ -121,10 +121,9 @@ const DropdownInput = ({
         {...register}
         
         value={inputValue}
-        // onChange={(e)=>{
-        //   handleInputChange(e)
-        //   handleManualChange(e)
-        // }}
+        onChange={(e)=>{
+          handleInputChange(e)
+        }}
         onFocus={() => setIsDropdownVisible(true)}
         placeholder={placeholder}
         className={`w-full px-4 py-2 !outline-none rounded-lg border-none ${

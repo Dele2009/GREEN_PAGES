@@ -16,9 +16,7 @@ import {
   FaEdit,
 } from "react-icons/fa";
 
-
-
-import { Modal, Button, Label, Select } from "flowbite-react";
+import { Modal, Button, Label, Select, TextInput } from "flowbite-react";
 import { AiOutlineLoading, AiOutlineStop } from "react-icons/ai";
 import { useEffect, useRef, useState } from "react";
 import { localGovernmentAreas } from "../utils/stateandlocalgovnt";
@@ -78,20 +76,37 @@ const EditBusinessModal = ({
       <Modal.Body className="bg-gray-50 p-6 space-y-6">
         <form onSubmit={hanleSubmit} ref={formRef}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Owner Name */}
+            {/* <div className="space-y-1 md:col-span-2">
+              <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
+                <FaUserCircle className="text-main_color" />
+                <span>Owner Name</span>
+              </label>
+              <TextInput
+                type="text"
+                name="owner_name"
+                required
+                disabled
+                value={details.owner_name || ""}
+                onChange={onTextFieldChange}
+                color=""
+              />
+            </div> */}
+
             {/* Company Name */}
             <div className="space-y-1">
               <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
                 <FaBuilding className="text-main_color" />
                 <span>Company Name</span>
               </label>
-              <input
+              <TextInput
                 type="text"
                 name="companyname"
                 required
                 disabled={isViewing}
                 value={details.companyname || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                color=""
               />
             </div>
 
@@ -101,14 +116,14 @@ const EditBusinessModal = ({
                 <FaMapMarkerAlt className="text-main_color" />
                 <span>Address</span>
               </label>
-              <input
+              <TextInput
                 type="text"
                 name="address"
                 required
                 disabled={isViewing}
                 value={details.address || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                color=""
               />
             </div>
 
@@ -118,12 +133,12 @@ const EditBusinessModal = ({
                 <FaFlag className="text-main_color" />
                 <span>State</span>
               </label>
-              {/* <input
+              {/* <TextInput
                  type="text"
                  name="state"
                  value={details.state || ""}
                  onChange={onTextFieldChange}
-                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                 color=""
                /> */}
               <Select
                 name="state"
@@ -131,6 +146,7 @@ const EditBusinessModal = ({
                 onChange={onTextFieldChange}
                 required
                 disabled={isViewing}
+                color=""
               >
                 <option value="">Select State</option>
                 {states.map((state) => (
@@ -147,12 +163,12 @@ const EditBusinessModal = ({
                 <FaFlag className="text-main_color" />
                 <span>Local Government</span>
               </label>
-              {/* <input
+              {/* <TextInput
                  type="text"
                  name="localgovernment"
                  value={details.localgovernment || ""}
                  onChange={onTextFieldChange}
-                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                 color=""
                /> */}
 
               <Select
@@ -161,6 +177,7 @@ const EditBusinessModal = ({
                 onChange={onTextFieldChange}
                 required
                 disabled={isViewing}
+                color=""
               >
                 <option value="">
                   {localGovtOptions.length === 0
@@ -177,17 +194,17 @@ const EditBusinessModal = ({
             </div>
 
             {/* Town */}
-            <div className="space-y-1 col-span-2">
+            <div className="space-y-1 md:col-span-2">
               <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
                 <FaCity className="text-main_color" />
                 <span>Category</span>
               </label>
-              {/* <input
+              {/* <TextInput
                  type="text"
                  name="town"
                  value={details.categoryofbusiness || ""}
                  onChange={onTextFieldChange}
-                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                 color=""
                /> */}
               <DropdownInput
                 defaultValue={details.categoryofbusiness}
@@ -195,7 +212,7 @@ const EditBusinessModal = ({
                   name: "categoryofbusiness",
                   required: true,
                   disabled: isViewing,
-                  onChange: (e) => onTextFieldChange(e)
+                  // onChange: (e) => onTextFieldChange(e)
                 }}
                 options={businessCategories}
                 placeholder="Type or choose a business category...."
@@ -211,14 +228,14 @@ const EditBusinessModal = ({
                 <FaCity className="text-main_color" />
                 <span>Town</span>
               </label>
-              <input
+              <TextInput
                 type="text"
                 name="town"
                 required
                 disabled={isViewing}
                 value={details.town || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                color=""
               />
             </div>
 
@@ -228,14 +245,14 @@ const EditBusinessModal = ({
                 <FaEnvelope className="text-main_color" />
                 <span>Email</span>
               </label>
-              <input
+              <TextInput
                 type="email"
                 name="email"
                 required
                 disabled={isViewing}
                 value={details.email || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                color=""
               />
             </div>
 
@@ -245,14 +262,17 @@ const EditBusinessModal = ({
                 <FaPhone className="text-main_color" />
                 <span>Phone Number</span>
               </label>
-              <input
+              <TextInput
                 type="text"
                 name="phonenumber"
                 required
                 disabled={isViewing}
                 value={details.phonenumber || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                maxLength={11}
+                minLength={11}
+                // max={11}
+                color=""
               />
             </div>
 
@@ -262,14 +282,15 @@ const EditBusinessModal = ({
                 <FaPhone className="text-main_color" />
                 <span>WhatsApp Number</span>
               </label>
-              <input
+              <TextInput
                 type="text"
                 name="whatsappnumber"
-                required
                 disabled={isViewing}
+                // maxLength={11}
+                // min={11}
                 value={details.whatsappnumber || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                color=""
               />
             </div>
 
@@ -279,14 +300,13 @@ const EditBusinessModal = ({
                 <FaGlobe className="text-main_color" />
                 <span>Website</span>
               </label>
-              <input
+              <TextInput
                 type="url"
                 name="website"
-                required
                 disabled={isViewing}
                 value={details.website || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                color=""
               />
             </div>
 
@@ -296,50 +316,33 @@ const EditBusinessModal = ({
                 <FaUsers className="text-main_color" />
                 <span>Staff Strength</span>
               </label>
-              <input
+              <TextInput
                 type="text"
                 name="staffstrength"
                 required
                 disabled={isViewing}
                 value={details.staffstrength || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                color=""
               />
             </div>
 
             {/* Status */}
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
                 <FaChartLine className="text-main_color" />
                 <span>Status</span>
               </label>
-              <input
+              <TextInput
                 type="text"
                 name="status"
                 required
                 disabled={isViewing}
                 value={details.status || ""}
                 onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
+                color=""
               />
-            </div>
-
-            {/* Owner Name */}
-            <div className="space-y-1">
-              <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
-                <FaUserCircle className="text-main_color" />
-                <span>Owner Name</span>
-              </label>
-              <input
-                type="text"
-                name="owner_name"
-                required
-                disabled={isViewing}
-                value={details.owner_name || ""}
-                onChange={onTextFieldChange}
-                className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:border-main_color focus:ring focus:ring-main_color/40"
-              />
-            </div>
+            </div> */}
 
             {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"> */}
             <div className="flex flex-col items-center">
@@ -348,13 +351,13 @@ const EditBusinessModal = ({
                 className="w-full h-[300px] cursor-pointer text-center font-medium text-main_color p-3 border border-gray-300 rounded-md bg-gray-100 flex flex-col items-center space-y-2"
               >
                 <img
-                  src={imagePreview.ceoImg}
+                  src={imagePreview.ceoImg || "/images/upload.png"}
                   alt="CEO"
                   className={`${
                     imagePreview.ceoImg === "/images/upload.png"
                       ? "h-5/6 w-5/6"
                       : "h-full w-full"
-                  } rounded-full object-cover`}
+                  } rounded-md object-cover`}
                 />
                 {imagePreview.ceoImg === "/images/upload.png" && (
                   <span className="text-gray-500">
@@ -362,7 +365,7 @@ const EditBusinessModal = ({
                   </span>
                 )}
               </Label>
-              <input
+              <TextInput
                 type="file"
                 name="ceoImg"
                 id="imgs"
@@ -392,7 +395,7 @@ const EditBusinessModal = ({
                   </span>
                 )}
               </Label>
-              <input
+              <TextInput
                 type="file"
                 name="logo"
                 id="productImg"
@@ -433,8 +436,7 @@ const EditBusinessModal = ({
             <Button
               color="light"
               onClick={toggleMode}
-                            disabled={isSaving}
-
+              disabled={isSaving}
               className="font-semibold text-white !bg-[#ff0000] rounded-md "
             >
               <span className="flex items-center space-x-2">

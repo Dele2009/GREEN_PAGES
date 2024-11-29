@@ -29,11 +29,12 @@ const UserHeader = ({ toggleSidebar }) => {
         if (newNotifications.length > prevNotifications.length) {
           const newNotificationCount =
             newNotifications.length - prevNotifications.length;
-          showToast(
-            "info",
-            `You have ${newNotificationCount} new notifications`
-          );
+          // showToast(
+          //   "info",
+          //   `You have ${newNotificationCount} new notifications`
+          // );
         }
+        console.log(response, newNotifications);
         return newNotifications;
       });
     } catch (error) {

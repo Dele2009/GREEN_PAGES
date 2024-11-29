@@ -13,16 +13,17 @@ import {
 import { useAppContext } from "../contexts/AppContext";
 
 const Body = () => {
-  const { businessCategories, states } = useAppContext();
-
-  const [btn, setBtn] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const [value, setValue] = useState({
+  const initialSearchState = {
     searchBy: "business_name",
     searchQuery: "",
     fromState: "all",
-  });
+  };
+  const { businessCategories, states } = useAppContext();
+
+  const [value, setValue] = useState(initialSearchState);
+
+  const [btn, setBtn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [notFound, setNotFound] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
@@ -32,15 +33,19 @@ const Body = () => {
   };
 
   useEffect(() => console.log(value), [value]);
-  useEffect(
-    () => setValue((prev) => ({ ...prev, searchQuery: "" })),
-    [value.searchBy, btn]
-  );
-  // const handleSearchBy = (type) => {
-  //   if (type === 'category') {
-  //     setIsByName(false)
-  //   }
-  // }
+
+  useEffect(() => {
+    setValue((prev) => ({
+      ...prev,
+      searchQuery: "",
+      fromState: "all",
+    }));
+    console.log(value.searchBy);
+  }, [value.searchBy]);
+
+  useEffect(() => {
+    setValue(initialSearchState);
+  }, [btn]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -135,6 +140,7 @@ const Body = () => {
                     required
                     // placeholder="---Choose category---"
                   >
+                    <option value="">---Choose category---</option>
                     {businessCategories.map((category, index) => (
                       <option key={index} value={category}>
                         {category}
@@ -230,9 +236,9 @@ const Body = () => {
               {searchResults.map((searchResult) => (
                 <div
                   key={searchResult.id}
-                  className="bg-white grid gap-3 grid-cols-1 md:grid-cols-2 shadow-lg rounded-lg p-6 transition-transform hover:scale-105 hover:shadow-xl"
+                  className="bg-white grid gap-3 grid-cols-1 shadow-lg rounded-lg p-6 transition-transform hover:scale-105 hover:shadow-xl"
                 >
-                  <div className="">
+                  {/* <div className="">
                     <img
                       src={`${import.meta.env.REACT_APP_API_URL}${
                         searchResult.logo
@@ -241,9 +247,9 @@ const Body = () => {
                         e.target.src = "/images/upload.png";
                       }}
                       alt="business-logo"
-                      className="h-[300px] md:w-full md:h-full object-fit rounded-md shadow-md"
+                      className="h-[300px] md:w-full object-fit rounded-md shadow-md"
                     />
-                  </div>
+                  </div> */}
                   <div className="">
                     <h3 className="text-lg font-bold text-green-800 mb-2">
                       {searchResult.companyname}
