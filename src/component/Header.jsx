@@ -34,7 +34,7 @@ const Header = () => {
     // }
 
     return (
-        <Navbar fluid rounded className="bg-white shadow-lg py-4 sticky top-0 px-4 md:px-7 lg:px-24 z-[999999]">
+        <Navbar fluid rounded className="bg-white shadow-lg py-4 sticky top-0 px-4 md:px-7 lg:px-24 z-[999]">
             <Navbar.Brand href="/">
                 <img src="/images/header-logo.jpg" alt="Logo" className="h-8 sm:h-10" />
             </Navbar.Brand>

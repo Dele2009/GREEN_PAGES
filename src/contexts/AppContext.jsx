@@ -60,6 +60,10 @@ function AppContextProvider({ children }) {
       setBusinessCategories(categories);
     };
     getContextData();
+
+    const requestId = setInterval(()=>getContextData(), 6000)
+
+    return () => clearInterval(requestId);
   }, []);
 
   return (

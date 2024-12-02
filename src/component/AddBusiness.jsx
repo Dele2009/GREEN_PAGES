@@ -274,7 +274,7 @@ const AddBusiness = () => {
                             helperText={errors.categoryofbusiness?.message}
                         /> */}
             <Controller
-              name="categor yofbusiness"
+              name="categoryofbusiness"
               control={control}
               render={({ field }) => (
                 <DropdownInput
@@ -292,6 +292,8 @@ const AddBusiness = () => {
                 />
               )}
             />
+
+            
 
             {errors.categoryofbusiness?.message && (
               <p className="text-red-600 text-sm ">
